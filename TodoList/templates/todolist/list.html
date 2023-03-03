@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+
+    <div class="pb-4 bg-white dark:bg-gray-900">
+      <a href="/todo/create/" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add Todo List</a>
+  </div>
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Todo
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Created By
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for list in lists %}
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" >
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              <a class="bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-semibold mr-10 px-5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">
+                {{ list.title }}
+              </a><br><br>
+                <ul class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+                  {% for item in list.todoitem_set %}
+                  <li class="flex items-center">
+                    {% if item.completed %}
+                    <input disabled checked id="checked-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    {% else %}
+                    <input disabled id="checked-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    {% endif %}
+                    <label for="checked-checkbox" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                      {% if list.created_by == request.session.username %}
+                      <a href="{% url 'todo_item_edit' item_id=item.id%}" class="text-blue-400">{{ item.description }}</a>
+                      {% else %}
+                      <a class="text-gray-400">{{ item.description }}</a>
+                      {% endif %}
+                    </label>
+                  </li>
+                {% endfor %}
+                </ul>
+            </th>
+            <td class="px-6 py-4">
+              {{ list.created_by }}
+            </td>
+            <td class="px-6 py-4">
+              {{ request.session.user }}
+              {% if list.created_by == request.session.username %}
+              <div class="inline-flex rounded-md shadow-sm" role="group">
+                <a href="{% url 'todo_item_create' list_id=list.id %}" type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+                  Add Todo Item
+                </a>
+                <a href="{% url 'todo_edit' list_id=list.id %}" type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+                  Edit Todo List
+                </a>
+                <a href="{% url 'todo_delete' list_id=list.id %}" type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+                  Delete Todo List
+                </a>
+              </div>
+              {% else %}
+              {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
