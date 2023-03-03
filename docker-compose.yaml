@@ -1,0 +1,32 @@
+services:
+  db:
+    container_name: todo_app_db
+    image: postgres
+    volumes:
+      - ./db/database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_DB=todoapp_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+  sessionstore:
+    container_name: todo_app_cache
+    image: redis:6.2.2-alpine
+  web:
+    build: .
+    container_name: todo_app_be
+    environment:
+      - POSTGRES_NAME=todoapp_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      db:
+        condition: service_started
+    ports:
+      - "8000:8000"
+
+networks:
+  default:
+    name: todo_project_default
