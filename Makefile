@@ -3,7 +3,7 @@ PROJECT_NAME=todoapp
 APICONTAINER := $(shell docker ps -q -f name="todo_app_be")
 DBCONTAINER := $(shell docker ps -q -f name="todo_app_db")
 COMPOSE=docker-compose
-MANAGE=python manage.py
+MANAGE=docker c
 
 # Commands
 start:
@@ -26,16 +26,16 @@ dbshell:
 	$(COMPOSE) exec db psql -U postgres -d todolist_db
 
 migrations:
-	$(MANAGE) makemigrations
-	$(MANAGE) migrate
+	$(COMPOSE) exec web python manage.py makemigrations
+	$(COMPOSE) exec web python manage.py migrate
 
 superuser:
-	$(MANAGE) createsuperuser
+	$(COMPOSE) run web python manage.py createsuperuser
 
 lint:
 	flake8 .
 
 test:
-	$(MANAGE) test
+	$(COMPOSE) exec web python manage.py test
 
 .PHONY: start stop restart logs shell dbshell migrations superuser lint test

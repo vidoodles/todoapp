@@ -14,6 +14,9 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy the project code
 COPY . /code/
+RUN mkdir db
+
+RUN chown -R $USER:$USER .
 
 # Set the entrypoint command
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

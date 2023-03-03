@@ -5,11 +5,13 @@ from django.contrib.auth.models import User
 from TodoList.models import TodoList, TodoItem
 from datetime import datetime
 
+import os
+
 
 class TodoListTests(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(
-            username='asher', password='asher')
+            username=os.environ.get('POSTGRES_USER'), password=os.environ.get('POSTGRES_PASSWORD'))
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
         self.todo_list = TodoList.objects.create(
